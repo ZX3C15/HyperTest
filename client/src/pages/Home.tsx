@@ -130,7 +130,7 @@ export default function Home() {
           {/* Feature Highlights */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-8 max-w-3xl mx-auto">
             {[
-              { icon: '💡', title: 'AI Insights', desc: 'Personalized recommendations' },
+              { icon: '💡', title: 'Personalized AI Insights', desc: 'Tailored recommendations for your health' },
               { icon: '📈', title: 'Track Progress', desc: 'Monitor your health journey' }
             ].map((feature, index) => (
               <div key={index} className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">

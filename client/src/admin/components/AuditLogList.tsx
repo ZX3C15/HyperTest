@@ -92,30 +92,35 @@ export default function AuditLogList() {
 
   if (loading) {
     return (
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex justify-center items-center h-32">
-            <RefreshCcw className="h-6 w-6 animate-spin text-primary" />
-            <span className="ml-2">Loading audit logs...</span>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex justify-center items-center h-32 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-lg">
+        <div className="text-center space-y-2">
+          <RefreshCcw className="h-8 w-8 animate-spin text-primary mx-auto" />
+          <span className="text-sm text-muted-foreground">Loading audit logs...</span>
+        </div>
+      </div>
     );
   };
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-        <CardTitle>Audit Logs</CardTitle>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <h3 className="text-lg font-semibold">Activity Log</h3>
+          {selectedCategories.length > 0 && (
+            <Badge variant="secondary" className="ml-2">
+              {selectedCategories.length} filter{selectedCategories.length > 1 ? 's' : ''} active
+            </Badge>
+          )}
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm">
-              <Filter className="mr-2 h-4 w-4" />
-              Filter
+            <Button variant="outline" size="sm" className="gap-2">
+              <Filter className="h-4 w-4" />
+              Filter Categories
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Categories</DropdownMenuLabel>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {categories.map((category) => (
               <DropdownMenuCheckboxItem
@@ -123,65 +128,89 @@ export default function AuditLogList() {
                 checked={selectedCategories.includes(category)}
                 onCheckedChange={() => toggleCategory(category)}
               >
-                {category.charAt(0).toUpperCase() + category.slice(1)}
+                <span className="capitalize">{category}</span>
               </DropdownMenuCheckboxItem>
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Time</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Action</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>User ID</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Severity</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {logs.map((log) => (
-              <TableRow key={log.userId + log.timestamp?.toString()}>
-                <TableCell className="whitespace-nowrap">
-                  {log.timestamp ? formatDistanceToNow(log.timestamp, { addSuffix: true }) : 'N/A'}
-                </TableCell>
-                <TableCell>
-                  <Badge className={getCategoryColor(log.category)}>
-                    {log.category}
-                  </Badge>
-                </TableCell>
-                <TableCell className="whitespace-nowrap">{log.action}</TableCell>
-                <TableCell className="max-w-md truncate">
-                  {log.description}
-                  {log.metadata?.details && (
-                    <span className="block text-xs text-muted-foreground mt-1">
-                      {JSON.stringify(log.metadata.details)}
-                    </span>
-                  )}
-                </TableCell>
-                <TableCell className="font-mono text-xs">
-                  {log.userId.slice(0, 8)}...
-                </TableCell>
-                <TableCell>
-                  {log.status === 'success' ? (
-                    <Check className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <AlertCircle className="h-4 w-4 text-red-500" />
-                  )}
-                </TableCell>
-                <TableCell>
-                  <Badge className={getSeverityColor(log.severity)}>
-                    {log.severity}
-                  </Badge>
-                </TableCell>
+      </div>
+
+      <div className="rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+                <TableHead className="font-semibold">Time</TableHead>
+                <TableHead className="font-semibold">Category</TableHead>
+                <TableHead className="font-semibold">Action</TableHead>
+                <TableHead className="font-semibold">Description</TableHead>
+                <TableHead className="font-semibold">User ID</TableHead>
+                <TableHead className="font-semibold text-center">Status</TableHead>
+                <TableHead className="font-semibold">Severity</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+            </TableHeader>
+            <TableBody>
+              {logs.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                    No audit logs found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                logs.map((log, index) => (
+                  <TableRow 
+                    key={log.userId + log.timestamp?.toString() + index}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-900/30 transition-colors"
+                  >
+                    <TableCell className="whitespace-nowrap text-sm">
+                      {log.timestamp ? formatDistanceToNow(log.timestamp, { addSuffix: true }) : 'N/A'}
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={getCategoryColor(log.category) + " capitalize"}>
+                        {log.category}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="font-medium">{log.action}</TableCell>
+                    <TableCell className="max-w-md">
+                      <div className="truncate">{log.description}</div>
+                      {log.metadata?.details && (
+                        <span className="block text-xs text-muted-foreground mt-1 truncate">
+                          {JSON.stringify(log.metadata.details)}
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell className="font-mono text-xs text-muted-foreground">
+                      {log.userId.slice(0, 8)}...
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {log.status === 'success' ? (
+                        <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30">
+                          <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
+                        </div>
+                      ) : (
+                        <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/30">
+                          <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
+                        </div>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={getSeverityColor(log.severity) + " capitalize"}>
+                        {log.severity}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+
+      {logs.length > 0 && (
+        <div className="text-sm text-muted-foreground">
+          Showing {logs.length} log{logs.length !== 1 ? 's' : ''}
+        </div>
+      )}
+    </div>
   );
 }

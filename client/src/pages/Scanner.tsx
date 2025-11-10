@@ -11,7 +11,7 @@ import { userProfileSchema } from '@shared/schema';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Shield } from 'lucide-react';
+import { Shield, Apple } from 'lucide-react';
 import {
   Toast,
   ToastTitle,

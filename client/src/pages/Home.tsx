@@ -128,9 +128,8 @@ export default function Home() {
           </div>
 
           {/* Feature Highlights */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-8 max-w-3xl mx-auto">
             {[
-              { icon: '🔍', title: 'Smart Scanning', desc: 'Instant OCR analysis' },
               { icon: '💡', title: 'AI Insights', desc: 'Personalized recommendations' },
               { icon: '📈', title: 'Track Progress', desc: 'Monitor your health journey' }
             ].map((feature, index) => (
